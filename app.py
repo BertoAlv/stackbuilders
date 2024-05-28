@@ -8,6 +8,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
+
 @app.route('/scrape', methods=['POST'])
 def scrape():
     url = request.form['url']
