@@ -2,14 +2,50 @@
 <html>
 <head>
     <title>Web Scraper</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .button-container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .button-container button {
+            margin-right: 10px;
+            padding: 10px 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Web Scraper</h1>
-    <form action="{{ url_for('filter_data') }}" method="post">
-        <button type="submit" name="filter_type" value="more_than_5_words">Aplicar Filtro: Más de 5 palabras</button>
-        <button type="submit" name="filter_type" value="five_or_less_words">Aplicar Filtro: 5 o menos palabras</button>
-    </form>
-    <table border="1">
+    <h1>HACKER NEWS WEB SCRAPER</h1>
+    <div class="button-container">
+        <form action="{{ url_for('filter_data') }}" method="post">
+            <button type="submit" name="filter_type" value="more_than_5_words">Filter: More than 5 words</button>
+        </form>
+        <form action="{{ url_for('filter_data') }}" method="post">
+            <button type="submit" name="filter_type" value="five_or_less_words">Filter: 5 words or less</button>
+        </form>
+        <form action="/" method="get">
+            <button type="submit">Reset Filter</button>
+        </form>
+    </div>
+    <table>
         <tr>
             <th>Rank</th>
             <th>Title</th>
