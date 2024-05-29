@@ -19,6 +19,7 @@ def filter_data():
     filtered_sorted_data = filter_and_sort_data(scraped_data, filter_type)
     return render_template('index.html', data=filtered_sorted_data)
 
+# Necessary configuration for Heroku
 port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':

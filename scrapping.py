@@ -10,59 +10,46 @@ def scrape_website(url):
 
     # Get the tr elements that contain the rank and title
     tr_elements = page_content.findAll('tr', class_='athing', limit=30)
-    # Get the span that contains the points
-    points_elements = page_content.findAll('span',class_='score',limit=30)
-    # Get the span that contains the 'subtitle' info
-    comments_elements = page_content.findAll('span',class_='subline',limit=30)
-
-    # Here I add an empty value, so we still iterate 30 times in case 
-    # that there is no comments or points in some of the entries.
-    while len(tr_elements) < 30:
-        tr_elements.append(None)
-    while len(points_elements) < 30:
-        points_elements.append(None)
-    while len(comments_elements) < 30:
-        comments_elements.append(None)
 
     data = []
 
-    # Iterate the different elements in pararell and append them to the data array that we will return
-    for tr, points, subtext in zip(tr_elements, points_elements, comments_elements):
+    # Iterate the 30 entries
+    for tr in tr_elements:
 
-        if tr:
-            rank = tr.find('span', class_='rank').get_text(strip=True) if tr.find('span', class_='rank') else "No number"
-            title_tag = tr.find('span', class_='titleline').find('a')
-            title = title_tag.get_text(strip=True) if title_tag else "No title"
-        else:
-            rank = "No rank"
-            title = "No title"
+        rank = tr.find('span', class_='rank').get_text(strip=True) if tr.find('span', class_='rank') else "No number"
+        title_tag = tr.find('span', class_='titleline').find('a')
+        title = title_tag.get_text(strip=True) if tr.find('span', class_='titleline') else "No title"
 
-        points_text = points.get_text(strip=True) if points else "0 points"
+        # Get points, if there are no points set them to 0.
+        points_element = tr.find_next_sibling('tr').find('span', class_='score')
+        points = points_element.get_text(strip=True) if points_element else "0 points"
         
-        if subtext:
-            comments_tag = subtext.find_all('a')[-1]
-            comments_text = comments_tag.get_text(strip=True) if comments_tag else "0 comments"
+        # Same thing as in points, get comments, if there are none set them to 0.
+        comments_tag = tr.find_next_sibling('tr').find('span', class_='subline')
+        if comments_tag:
+            comments = comments_tag.find_all('a')[-1].get_text(strip=True)
         else:
-            comments_text = "0 comments"
-
-        if comments_text == "hide"  or comments_text == "discuss":
-            comments_text = "0 comments"
+            comments = "0 comments"
+    
+        if comments == "hide"  or comments == "discuss":
+            comments = "0 comments"
         
+        # Append the data of each row, extracting only the numbers from the points and comments
         data.append({
             'rank': rank,
             'title': title,
-            'points': points_text.split(' ')[0],
-            'comments': comments_text[:-8]
+            'points': points.split(' ')[0],
+            'comments': comments[:-8]
         })
 
     return data
 
-# Function that counts words, not having into acount points or lines.
+# Function that counts words, not taking into account periods, dashes, or other common symbols
 def count_words(title):
-    words = re.findall(r'\b(?:\w+[\.\-]?)+\b', title)
+    words = re.findall(r'\b(?:\w+[\.\-\'\&]?)+\b', title)
     return len(words)
 
-# Function that filters the data
+# Function that filters the data and splits it into more than 5 words or five words or less
 def filter_and_sort_data(data, filter_type):
 
     if filter_type == "more_than_5_words":
