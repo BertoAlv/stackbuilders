@@ -5,10 +5,25 @@
 </head>
 <body>
     <h1>Web Scraper</h1>
-    <form action="/scrape" method="post">
-        <label for="url">URL:</label>
-        <input type="text" id="url" name="url" required>
-        <button type="submit">Scrape</button>
+    <form action="{{ url_for('filter_data') }}" method="post">
+        <button type="submit" name="filter_type" value="more_than_5_words">Aplicar Filtro: Más de 5 palabras</button>
+        <button type="submit" name="filter_type" value="five_or_less_words">Aplicar Filtro: 5 o menos palabras</button>
     </form>
+    <table border="1">
+        <tr>
+            <th>Rank</th>
+            <th>Title</th>
+            <th>Points</th>
+            <th>Comments</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.rank }}</td>
+            <td>{{ item.title }}</td>
+            <td>{{ item.points }}</td>
+            <td>{{ item.comments }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

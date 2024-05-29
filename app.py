@@ -1,19 +1,24 @@
 
 from flask import Flask, render_template, request
-from scrapping import scrape_website
+from scrapping import filter_and_sort_data, scrape_website, count_words
 
 app = Flask(__name__)
 
 @app.route('/')
-def home():
-    return render_template('index.html')
+def index():
+    url = 'https://news.ycombinator.com/'
+    scraped_data = scrape_website(url)
+    return render_template('index.html', data=scraped_data)
 
 
-@app.route('/scrape', methods=['POST'])
-def scrape():
-    url = request.form['url']
-    data = scrape_website(url)
-    return render_template('result.html', data=data)
+@app.route('/filter', methods=['POST'])
+def filter_data():
+    url = 'https://news.ycombinator.com/'
+    scraped_data = scrape_website(url)
+    filter_type = request.form.get('filter_type')
+    filtered_sorted_data = filter_and_sort_data(scraped_data, filter_type)
+    return render_template('index.html', data=filtered_sorted_data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
