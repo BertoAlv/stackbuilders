@@ -1,4 +1,4 @@
-
+import os
 from flask import Flask, render_template, request
 from scrapping import filter_and_sort_data, scrape_website, count_words
 
@@ -19,6 +19,8 @@ def filter_data():
     filtered_sorted_data = filter_and_sort_data(scraped_data, filter_type)
     return render_template('index.html', data=filtered_sorted_data)
 
+port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=port)
     app.run(debug=True)
